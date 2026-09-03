@@ -29,7 +29,7 @@ void WINAPI ServiceMain(DWORD, LPWSTR*) {
 
   // Configuration is loaded by the installer/runtime in the signed service package.
   clouddesk::AgentConfig config;
-  config.baseUrl = L"https://api.clouddesk.example";
+  config.controlPlaneUrl = L"https://api.clouddesk.example";
   clouddesk::CloudDeskAgentService service(std::move(config));
   g_service = &service;
   SetStatus(SERVICE_RUNNING);

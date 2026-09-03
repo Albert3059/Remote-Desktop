@@ -8,12 +8,16 @@ Run `pnpm check` from this directory or `pnpm exec tsc --noEmit -p agent/tsconfi
 
 The compiled entry point is intended to be wrapped as `clouddesk-agent.exe` using a Windows-compatible Node runtime packaging tool. The repository does not include a signed executable.
 
-## Install
+## Client install flow
 
-1. Stage configuration with `install.ps1`.
-2. Place the packaged binary at `%ProgramData%\\CloudDeskAgent\\clouddesk-agent.exe`.
-3. Run `install-service.ps1` as Administrator.
-4. Validate the service and logs before distributing it.
+1. Set `CLOUDDESK_AGENT_BINARY_URL` to the published, signed x64 `clouddesk-agent.exe` and set `CLOUDDESK_AGENT_SHA256` to its SHA-256 hash.
+2. Sign in to the dashboard, create a pairing record, and select **Download installer**.
+3. Copy the downloaded `clouddesk-agent-install.ps1` to the Windows client.
+4. Open PowerShell as Administrator and run `Set-ExecutionPolicy -Scope Process Bypass`, then `./clouddesk-agent-install.ps1`.
+
+The installer enrolls the computer, downloads and verifies the executable, protects the enrollment token under `%ProgramData%\\CloudDeskAgent`, installs the automatic Windows service, and starts it. It uses outbound HTTPS only.
+
+For manual staging, `install.ps1` accepts `-AgentBinary` and `-ExpectedSha256`, then installs the service automatically when the executable is present.
 
 The agent makes outbound HTTPS requests only. Enrollment tokens are never written to logs. Supply a trusted Authenticode certificate and verify the signature before production distribution.
 
@@ -37,4 +41,4 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\heartbeat-test.ps1
 ```
 
-The dashboard should show the device as `online` after the first successful heartbeat.
+The dashboard should show the device as `online` after the first successful heartbeat. The native project still needs to be built and signed on a Windows build runner before a production binary can be published; the repository does not ship an executable.

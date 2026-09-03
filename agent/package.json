@@ -6,6 +6,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "build": "tsc --outDir dist",
+    "build:windows": "powershell.exe -ExecutionPolicy Bypass -File .\\build-windows.ps1",
     "package:check": "node -e \"const p=require('./packaging.json'); if(!p.outboundOnly || !p.signing.required) process.exit(1); console.log('Packaging metadata valid')\""
   },
   "devDependencies": {

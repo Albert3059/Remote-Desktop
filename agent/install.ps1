@@ -1,12 +1,26 @@
 param(
   [Parameter(Mandatory=$true)][string]$ApiUrl,
   [Parameter(Mandatory=$true)][string]$DeviceId,
-  [Parameter(Mandatory=$true)][string]$EnrollmentToken
+  [Parameter(Mandatory=$true)][string]$EnrollmentToken,
+  [Parameter(Mandatory=$false)][string]$AgentBinary,
+  [Parameter(Mandatory=$false)][string]$ExpectedSha256
 )
 
 $ErrorActionPreference = 'Stop'
 $installDir = Join-Path $env:ProgramData 'CloudDeskAgent'
 New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+if ($AgentBinary) {
+  $serviceBinary = Join-Path $installDir 'clouddesk-agent.exe'
+  Invoke-WebRequest -Uri $AgentBinary -OutFile $serviceBinary -UseBasicParsing
+  if ($ExpectedSha256) {
+    $actualSha256 = (Get-FileHash -Path $serviceBinary -Algorithm SHA256).Hash
+    if ($actualSha256 -ne $ExpectedSha256.ToUpperInvariant()) {
+      Remove-Item $serviceBinary -Force
+      throw 'Downloaded agent failed SHA-256 verification.'
+    }
+  }
+}
 
 $config = @{
   CLOUDDESK_API_URL = $ApiUrl
@@ -26,4 +40,8 @@ $acl.AddAccessRule($rule)
 Set-Acl -Path $configPath -AclObject $acl
 
 Write-Output "CloudDesk agent files staged at $installDir"
-Write-Output 'Next step: place a signed CloudDeskAgent Windows service binary and run install-service.ps1 as Administrator.'
+if (Test-Path (Join-Path $installDir 'clouddesk-agent.exe')) {
+  & (Join-Path $PSScriptRoot 'install-service.ps1') -InstallDir $installDir
+} else {
+  Write-Output 'Agent binary not supplied; configure AgentBinary or place a signed clouddesk-agent.exe before installing the service.'
+}

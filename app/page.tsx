@@ -31,13 +31,15 @@ function Dashboard() {
   const [state, setState] = useState<'idle' | 'authorizing' | 'streaming' | 'reconnecting'>('idle')
   const [notice, setNotice] = useState('')
   const [pairingCode, setPairingCode] = useState('')
+  const [installerUrl, setInstallerUrl] = useState('')
   const [sessionId, setSessionId] = useState<string | null>(null)
   async function load() { setDevices(await fetchDevices()) }
   async function pair() {
     try {
       const device = await pairRemoteDevice(pairingCode)
+      setInstallerUrl(`/api/agent/download?pairingCode=${encodeURIComponent(pairingCode.trim().toUpperCase())}`)
       setPairingCode('')
-      setNotice(`Pairing record created for ${device.name}. Install the Windows agent and use this code to enroll it.`)
+      setNotice(`Pairing record created for ${device.name}. Download the installer and run it as Administrator on the client machine.`)
       await load()
     } catch (error) {
       setNotice(error instanceof Error ? error.message : 'Unable to create pairing record.')

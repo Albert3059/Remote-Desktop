@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:check": "node scripts/apply-schema.mjs --check",
+    "db:setup": "node scripts/apply-schema.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.123.0",
