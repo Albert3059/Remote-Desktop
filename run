@@ -18,3 +18,14 @@ agent\heartbeat-test.ps1
 .\enroll.ps1 `
   -ApiUrl "https://additionally-fossil-bug-songs.trycloudflare.com" `
   -PairingCode "CD-AWS-001"
+
+
+
+@xMVBAfOjOP6--2i0)RMc-zv1(;allgE
+
+https://github.com/Albert3059/Remote-Desktop/releases/download/v1.0.0/CloudDeskAgent.exe
+
+
+Invoke-WebRequest `
+  -Uri "https://github.com/Albert3059/Remote-Desktop/releases/download/v1.0.0/CloudDeskAgent.exe" `
+  -OutFile "$env:USERPROFILE\Downloads\CloudDeskAgent.exe"
