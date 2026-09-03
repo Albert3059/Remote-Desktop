@@ -1,0 +1,4 @@
+cd C:\CloudDeskAgent\agent
+.\enroll.ps1 `
+  -ApiUrl "https://additionally-fossil-bug-songs.trycloudflare.com" `
+  -PairingCode "CD-AWS-001"
