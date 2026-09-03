@@ -1,0 +1,15 @@
+{
+  "product": "CloudDesk Windows Agent",
+  "serviceName": "CloudDeskAgent",
+  "architecture": ["x64"],
+  "runtime": "windows-service",
+  "installDirectory": "%ProgramData%\\CloudDeskAgent",
+  "configFile": "config.json",
+  "logDirectory": "%ProgramData%\\CloudDeskAgent\\logs",
+  "outboundOnly": true,
+  "signing": {
+    "required": true,
+    "certificateSubject": "CN=CloudDesk Agent Publisher",
+    "commandPlaceholder": "signtool sign /fd SHA256 /a clouddesk-agent.exe"
+  }
+}
