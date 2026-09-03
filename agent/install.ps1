@@ -37,6 +37,8 @@ $acl.SetAccessRuleProtection($true, $false)
 $acl.SetOwner([System.Security.Principal.NTAccount]'BUILTIN\\Administrators')
 $rule = New-Object System.Security.AccessControl.FileSystemAccessRule('BUILTIN\\Administrators','FullControl','Allow')
 $acl.AddAccessRule($rule)
+$serviceRule = New-Object System.Security.AccessControl.FileSystemAccessRule('SYSTEM','Read','Allow')
+$acl.AddAccessRule($serviceRule)
 Set-Acl -Path $configPath -AclObject $acl
 
 Write-Output "CloudDesk agent files staged at $installDir"

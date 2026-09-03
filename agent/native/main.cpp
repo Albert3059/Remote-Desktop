@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <string>
 #include <utility>
+#include <filesystem>
 
 namespace {
 constexpr wchar_t kServiceName[] = L"CloudDeskAgent";
@@ -27,9 +28,16 @@ void WINAPI ServiceMain(DWORD, LPWSTR*) {
   if (!g_statusHandle) return;
   SetStatus(SERVICE_START_PENDING, NO_ERROR, 3000);
 
-  // Configuration is loaded by the installer/runtime in the signed service package.
+  wchar_t executablePath[MAX_PATH]{};
+  GetModuleFileNameW(nullptr, executablePath, ARRAYSIZE(executablePath));
+  const std::filesystem::path configPath = std::filesystem::path(executablePath).parent_path() / L"config.json";
   clouddesk::AgentConfig config;
-  config.controlPlaneUrl = L"https://api.clouddesk.example";
+  try {
+    config = clouddesk::AgentConfig::Load(configPath.wstring());
+  } catch (...) {
+    SetStatus(SERVICE_STOPPED, ERROR_INVALID_DATA);
+    return;
+  }
   clouddesk::CloudDeskAgentService service(std::move(config));
   g_service = &service;
   SetStatus(SERVICE_RUNNING);

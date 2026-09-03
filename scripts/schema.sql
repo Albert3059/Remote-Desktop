@@ -73,6 +73,9 @@ CREATE TABLE IF NOT EXISTS "remote_devices" (
   "updatedAt"           timestamp NOT NULL
 );
 
+ALTER TABLE "remote_devices" ADD COLUMN IF NOT EXISTS "installTokenHash" text;
+ALTER TABLE "remote_devices" ADD COLUMN IF NOT EXISTS "installTokenExpiresAt" timestamp;
+
 CREATE TABLE IF NOT EXISTS "remote_sessions" (
   "id"        text PRIMARY KEY,
   "userId"    text NOT NULL,

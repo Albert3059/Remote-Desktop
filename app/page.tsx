@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import ClaudePanel from '@/app/components/ClaudePanel'
-import { endRemoteSession, pairRemoteDevice, startRemoteSession } from '@/app/actions/remote'
+import { endRemoteSession, startRemoteSession } from '@/app/actions/remote'
 import { signIn, signOut, signUp, useSession } from '@/lib/auth-client'
 
 type Device = { id: string; name: string; hostname: string; os: string; status: string }
@@ -34,17 +34,12 @@ function Dashboard() {
   const [installerUrl, setInstallerUrl] = useState('')
   const [sessionId, setSessionId] = useState<string | null>(null)
   async function load() { setDevices(await fetchDevices()) }
-  async function pair() {
-    try {
-      const device = await pairRemoteDevice(pairingCode)
-      setInstallerUrl(`/api/agent/download?pairingCode=${encodeURIComponent(pairingCode.trim().toUpperCase())}`)
-      setPairingCode('')
-      setNotice(`Pairing record created for ${device.name}. Download the installer and run it as Administrator on the client machine.`)
-      await load()
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : 'Unable to create pairing record.')
-    }
+  async function prepareAgent() {
+    setInstallerUrl('/api/agent/download')
+    setNotice('Personalized installer ready. Download it and run it as Administrator on the client machine.')
+    window.location.assign('/api/agent/download')
   }
+  const pair = prepareAgent
   async function connect(device: Device) {
     try {
       const session = await startRemoteSession(device.id)
